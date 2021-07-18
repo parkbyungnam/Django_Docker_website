@@ -48,6 +48,8 @@ DB는 로컬볼륨과 마운트하여 백업
 
 # 5. Use Docker
 
+
+## Ⅰ. Create Dockerfile, docker-compose.yaml
 ```
 #Dockerfile
 
@@ -101,9 +103,64 @@ services:
 프로젝트 최상단 디렉토리에서 Dockerfile 과 docker-compose.yaml 작성
 
 
+## Ⅱ. build
 
 ```
-$ docker build --tag tom3k/django:v1.1 . 
+$ docker build --tag (yourID)/(name):(tag) . 
+```
+
+![image](https://user-images.githubusercontent.com/57394605/126055565-accb320d-85a1-45e0-b8c5-1ce530eff9aa.png)
+
+![image](https://user-images.githubusercontent.com/57394605/126055618-f1f30df2-8e98-4fd9-b78c-8007c93c0813.png)
+
+
+
+## Ⅲ. run DB
+
+```
+docker run --rm -d \         
+    --name db \
+    -e POSTGRES_DB=djangodb \
+    -e POSTGRES_USER=root \
+    -e POSTGRES_PASSWORD=toor \
+    postgres:12.7
+```
+
+![image](https://user-images.githubusercontent.com/57394605/126055715-1832a1bf-f367-45be-9189-0e146b590754.png)
+
+
+## Ⅳ. migrate
+```
+docker run -it --rm \
+    -p 8000:8000 \
+    --link db \
+    -e DJANGO_DB_HOST=db \
+    -e DJANGO_DEBUG=True \
+tom3k/django:v1.1 python3 manage.py migrate
+```
+
+![image](https://user-images.githubusercontent.com/57394605/126055740-4423d466-5594-4d7d-804c-241d429430b9.png)
+
+
+## Ⅴ. runserver
+
+```
+docker run -it --rm \
+    -p 8000:8000 \
+    --link db \
+    -e DJANGO_DB_HOST=db \
+    -e DJANGO_DEBUG=True \
+tom3k/django:v1.1 python3 manage.py runserver
+```
+![image](https://user-images.githubusercontent.com/57394605/126055748-d7aa4629-1823-4aa7-8812-bb9fc4a106b8.png)
+
+
+## Ⅵ. docker hub
+
+```
+docker login
+
+docker push (yourID)/(name):(tag)
 ```
 
 ![image](https://user-images.githubusercontent.com/57394605/126055407-bd8efefd-993f-44df-a331-0fbc72900f4c.png)
